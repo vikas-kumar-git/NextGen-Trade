@@ -8,7 +8,7 @@ from tensorflow.keras.models import load_model
 
 
 class StockPredictor:
-    def __init__(self, ticker, model_path=None, seq_len=60):
+    def __init__(self, ticker, model_path=None, seq_len=100):
         self.ticker = ticker.upper()
         self.seq_len = seq_len
         self.model_path = model_path or settings.MODEL_PATH
@@ -46,6 +46,9 @@ class StockPredictor:
             raise FileNotFoundError(f"Model not found at {self.model_path}")
 
         self.model = load_model(self.model_path)
+        model_seq_len = self.model.input_shape[1]
+        if model_seq_len is not None:
+            self.seq_len = int(model_seq_len)
 
     # Predict
     def predict(self, X):
@@ -97,8 +100,8 @@ class StockPredictor:
     # Main run
     def run(self):
         self.fetch_data()
-        X, y = self.preprocess()
         self.load_model()
+        X, y = self.preprocess()
 
         y_pred = self.predict(X)
         mse, rmse, r2 = self.calculate_metrics(y, y_pred)
