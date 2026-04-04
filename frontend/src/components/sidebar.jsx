@@ -39,9 +39,9 @@ function Sidebar() {
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center gap-2">
             <img 
-                src="/ngt-logo.jpeg"  
+                src="/NGT.png"  
                 alt="NGT Logo"
-                className="w-8 h-8 object-contain"
+                className="w-15 h-10 object-contain"
             />
 
             {!collapsed && (

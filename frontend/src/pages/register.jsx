@@ -6,11 +6,13 @@ function Register() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    setError("");
 
     try {
       await API.post("register/", {
@@ -21,7 +23,12 @@ function Register() {
 
       navigate("/");
     } catch (err) {
-      alert("Registration failed");
+      setError(
+        err?.response?.data?.username?.[0] ||
+          err?.response?.data?.email?.[0] ||
+          err?.response?.data?.password?.[0] ||
+          "Registration failed. Try a different username or check that the backend is running."
+      );
     }
   };
 
@@ -33,55 +40,68 @@ function Register() {
         <div className="w-full md:w-1/2 p-10">
           <h2 className="text-2xl font-bold mb-2">Create Account</h2>
           <p className="text-gray-500 mb-6">
-            Sign up to start predicting stock trends
+            Create a local account to save predictions, view history, and test the stock forecasting workflow.
           </p>
 
           <form onSubmit={handleRegister}>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Username
+            </label>
 
             <input
               type="text"
-              placeholder="Username"
+              placeholder="Choose a username"
               className="w-full p-3 border rounded-lg mb-4"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
 
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Email
+            </label>
             <input
               type="email"
-              placeholder="Email"
+              placeholder="Enter your email"
               className="w-full p-3 border rounded-lg mb-4"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
 
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Password
+            </label>
             <input
               type="password"
-              placeholder="Password"
+              placeholder="Create a password"
               className="w-full p-3 border rounded-lg mb-4"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
 
+            <p className="text-xs text-gray-500 mb-4">
+              Avoid usernames starting with <span className="font-semibold">tg_</span>, because that prefix is reserved by the backend.
+            </p>
+
+            {error && (
+              <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                {error}
+              </div>
+            )}
+
             <button className="w-full bg-[#020C16] text-white py-2 rounded-lg hover:bg-[#071A2B] transition shadow-md hover:shadow-green-500/20">
-              Register
+              Create Account
             </button>
           </form>
 
           {/* Divider */}
           <div className="flex items-center my-6">
             <div className="flex-1 h-px bg-gray-300"></div>
-            <span className="px-3 text-gray-400 text-sm">or sign up with</span>
+            <span className="px-3 text-gray-400 text-sm">project note</span>
             <div className="flex-1 h-px bg-gray-300"></div>
           </div>
 
-          {/* Social Buttons */}
-          <div className="flex gap-4">
-            <button className="w-1/2 border p-2 rounded-lg hover:bg-gray-100">
-              Google
-            </button>
-            <button className="w-1/2 border p-2 rounded-lg hover:bg-gray-100">
-              Apple
-            </button>
+          <div className="rounded-lg border border-blue-100 bg-blue-50 p-4 text-sm text-blue-900">
+            Registration here creates a user inside the Django backend database used by this project.
           </div>
 
           <p className="text-sm text-center mt-6">
