@@ -12,6 +12,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { useTheme } from "../theme";
 
 function Dashboard() {
   const [ticker, setTicker] = useState("");
@@ -19,6 +20,7 @@ function Dashboard() {
   const [error, setError] = useState("");
   const [selectedCompany, setSelectedCompany] = useState(null);
   const location = useLocation();
+  const { isDark } = useTheme();
 
   const searchTerm = ticker.trim().toLowerCase();
   const suggestions = searchTerm
@@ -93,18 +95,28 @@ function Dashboard() {
 
   return (
     <Layout>
-      <div className="bg-white p-6 rounded-xl shadow mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">
+      <div
+        className={`mb-6 rounded-[1.75rem] border p-6 shadow-xl backdrop-blur ${
+          isDark
+            ? "border-white/10 bg-white/5 shadow-slate-950/20"
+            : "border-white/70 bg-white/80 shadow-cyan-100/50"
+        }`}
+      >
+        <h1 className={`mb-2 text-2xl font-bold ${isDark ? "text-white" : "text-slate-900"}`}>
           Stock Prediction Dashboard
         </h1>
-        <p className="text-gray-600 mb-4">
+        <p className={`mb-4 ${isDark ? "text-slate-300" : "text-slate-600"}`}>
           Search by company name or ticker to fetch recent market data, run the trained LSTM model, and review the predicted next closing price with supporting charts.
         </p>
         <div className="flex flex-col md:flex-row gap-4 items-start">
           <div className="flex-1 w-full">
             <input
               placeholder="Search company or ticker, for example Reliance, TCS, Apple, INFY.NS"
-              className="p-3 border rounded-lg w-full"
+              className={`w-full rounded-2xl border p-3 focus:border-cyan-400 focus:outline-none ${
+                isDark
+                  ? "border-white/10 bg-slate-900/80 text-white placeholder:text-slate-500"
+                  : "border-slate-200 bg-white text-slate-900 placeholder:text-slate-400"
+              }`}
               value={ticker}
               onChange={(e) => {
                 setTicker(e.target.value);
@@ -112,16 +124,28 @@ function Dashboard() {
               }}
             />
             {suggestions.length > 0 && (
-              <div className="mt-2 rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+              <div
+                className={`mt-2 overflow-hidden rounded-2xl border shadow-sm ${
+                  isDark
+                    ? "border-white/10 bg-slate-950/95"
+                    : "border-slate-200 bg-white"
+                }`}
+              >
                 {suggestions.map((company) => (
                   <button
                     key={company.ticker}
                     type="button"
                     onClick={() => handleSuggestionSelect(company)}
-                    className="w-full border-b last:border-b-0 border-gray-100 px-4 py-3 text-left hover:bg-gray-50"
+                    className={`w-full border-b px-4 py-3 text-left transition last:border-b-0 ${
+                      isDark
+                        ? "border-white/5 hover:bg-white/5"
+                        : "border-slate-100 hover:bg-slate-50"
+                    }`}
                   >
-                    <div className="font-medium text-gray-900">{company.name}</div>
-                    <div className="text-sm text-gray-500">
+                    <div className={`font-medium ${isDark ? "text-white" : "text-slate-900"}`}>
+                      {company.name}
+                    </div>
+                    <div className={`text-sm ${isDark ? "text-slate-400" : "text-slate-500"}`}>
                       {company.ticker} • {company.exchange}
                     </div>
                   </button>
@@ -131,20 +155,32 @@ function Dashboard() {
           </div>
           <button
             onClick={() => fetchData(selectedCompany?.ticker || ticker)}
-            className="bg-indigo-600 text-white px-6 py-3 rounded-lg w-full md:w-auto"
+            className={`w-full rounded-2xl px-6 py-3 font-semibold transition md:w-auto ${
+              isDark
+                ? "bg-emerald-400 text-slate-950 hover:bg-emerald-300"
+                : "bg-emerald-500 text-white hover:bg-emerald-600"
+            }`}
           >
             Generate Prediction
           </button>
         </div>
-        <p className="text-xs text-gray-500 mt-3">
+        <p className={`mt-3 text-xs ${isDark ? "text-slate-400" : "text-slate-500"}`}>
           Indian examples: <span className="font-semibold">RELIANCE.NS</span>, <span className="font-semibold">TCS.NS</span>, <span className="font-semibold">INFY.NS</span>. US examples: <span className="font-semibold">AAPL</span>, <span className="font-semibold">MSFT</span>, <span className="font-semibold">TSLA</span>.
         </p>
       </div>
 
-      <div className="bg-white p-4 rounded-xl shadow mb-6">
-        <h2 className="font-semibold text-gray-900 mb-2">Selected Company</h2>
+      <div
+        className={`mb-6 rounded-[1.5rem] border p-4 shadow-xl backdrop-blur ${
+          isDark
+            ? "border-white/10 bg-white/5 shadow-slate-950/20"
+            : "border-white/70 bg-white/80 shadow-cyan-100/50"
+        }`}
+      >
+        <h2 className={`mb-2 font-semibold ${isDark ? "text-white" : "text-slate-900"}`}>
+          Selected Company
+        </h2>
         {selectedCompany ? (
-          <div className="text-sm text-gray-700">
+          <div className={`text-sm ${isDark ? "text-slate-300" : "text-slate-600"}`}>
             <p>
               <span className="font-semibold">Company:</span> {selectedCompany.name}
             </p>
@@ -156,14 +192,20 @@ function Dashboard() {
             </p>
           </div>
         ) : (
-          <p className="text-sm text-gray-500">
+          <p className={`text-sm ${isDark ? "text-slate-400" : "text-slate-500"}`}>
             No company selected yet. Search for a company name or enter a ticker manually.
           </p>
         )}
       </div>
 
       {error && (
-        <div className="mb-6 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        <div
+          className={`mb-6 rounded-[1.5rem] border p-4 text-sm ${
+            isDark
+              ? "border-red-400/30 bg-red-500/10 text-red-100"
+              : "border-red-200 bg-red-50 text-red-700"
+          }`}
+        >
           {error}
         </div>
       )}
@@ -198,9 +240,17 @@ function Dashboard() {
 
       {/* 📈 PRICE CHART */}
       {result?.chart_data && (
-        <div className="bg-white p-4 rounded-xl shadow mb-6">
-          <h2 className="mb-1 font-semibold">Closing Price Trend</h2>
-          <p className="text-sm text-gray-500 mb-4">
+        <div
+          className={`mb-6 rounded-[1.5rem] border p-4 shadow-xl backdrop-blur ${
+            isDark
+              ? "border-white/10 bg-white/5 shadow-slate-950/20"
+              : "border-white/70 bg-white/80 shadow-cyan-100/50"
+          }`}
+        >
+          <h2 className={`mb-1 font-semibold ${isDark ? "text-white" : "text-slate-900"}`}>
+            Closing Price Trend
+          </h2>
+          <p className={`mb-4 text-sm ${isDark ? "text-slate-400" : "text-slate-500"}`}>
             Recent price movement returned by the backend for the selected ticker.
           </p>
 
@@ -217,9 +267,17 @@ function Dashboard() {
 
       {/* 📉 VOLUME CHART */}
       {result?.chart_data && (
-        <div className="bg-white p-4 rounded-xl shadow mb-6">
-          <h3 className="mb-1 font-semibold">Trading Volume</h3>
-          <p className="text-sm text-gray-500 mb-4">
+        <div
+          className={`mb-6 rounded-[1.5rem] border p-4 shadow-xl backdrop-blur ${
+            isDark
+              ? "border-white/10 bg-white/5 shadow-slate-950/20"
+              : "border-white/70 bg-white/80 shadow-cyan-100/50"
+          }`}
+        >
+          <h3 className={`mb-1 font-semibold ${isDark ? "text-white" : "text-slate-900"}`}>
+            Trading Volume
+          </h3>
+          <p className={`mb-4 text-sm ${isDark ? "text-slate-400" : "text-slate-500"}`}>
             Daily traded volume over the same returned market window.
           </p>
 
@@ -236,9 +294,17 @@ function Dashboard() {
 
       {/* 🕯️ CANDLESTICK (LIGHT VERSION) */}
       {result?.chart_data && (
-        <div className="bg-white p-4 rounded-xl shadow">
-          <h3 className="mb-1 font-semibold">Simple Candlestick Snapshot</h3>
-          <p className="text-sm text-gray-500 mb-4">
+        <div
+          className={`rounded-[1.5rem] border p-4 shadow-xl backdrop-blur ${
+            isDark
+              ? "border-white/10 bg-white/5 shadow-slate-950/20"
+              : "border-white/70 bg-white/80 shadow-cyan-100/50"
+          }`}
+        >
+          <h3 className={`mb-1 font-semibold ${isDark ? "text-white" : "text-slate-900"}`}>
+            Simple Candlestick Snapshot
+          </h3>
+          <p className={`mb-4 text-sm ${isDark ? "text-slate-400" : "text-slate-500"}`}>
             Green bars indicate the close was above the open. Red bars indicate the close was below the open.
           </p>
 
@@ -277,13 +343,23 @@ function Dashboard() {
 
 /* 📦 CARD COMPONENT */
 function Card({ label, value, description, ticker, isCurrency = false }) {
+  const { isDark } = useTheme();
+
   return (
-    <div className="bg-white p-4 rounded-xl shadow">
-      <p className="text-gray-500 text-sm">{label}</p>
-      <p className="text-xl font-bold">
+    <div
+      className={`rounded-[1.5rem] border p-4 shadow-xl backdrop-blur ${
+        isDark
+          ? "border-white/10 bg-white/5 shadow-slate-950/20"
+          : "border-white/70 bg-white/80 shadow-cyan-100/50"
+      }`}
+    >
+      <p className={`text-sm ${isDark ? "text-slate-400" : "text-slate-500"}`}>{label}</p>
+      <p className={`text-xl font-bold ${isDark ? "text-white" : "text-slate-900"}`}>
         {isCurrency ? formatCurrencyValue(value, ticker) : value}
       </p>
-      <p className="text-xs text-gray-500 mt-2">{description}</p>
+      <p className={`mt-2 text-xs ${isDark ? "text-slate-400" : "text-slate-500"}`}>
+        {description}
+      </p>
     </div>
   );
 }
