@@ -11,7 +11,6 @@ import pytz
 
 from .models import Prediction
 from .serializers import PredictionSerializer
-from .services.predictor import StockPredictor
 from .utils import check_rate_limit
 import traceback
 
@@ -55,6 +54,8 @@ class PredictView(APIView):
             )
 
         try:
+            from .services.predictor import StockPredictor
+
             # Run ML model
             predictor = StockPredictor(ticker)
             result = predictor.run()
