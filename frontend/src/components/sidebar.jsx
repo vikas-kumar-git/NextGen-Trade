@@ -24,7 +24,7 @@ function Sidebar() {
 
   return (
     <div
-      className={`h-screen flex flex-col justify-between backdrop-blur transition-all duration-300 ${
+      className={`h-screen shrink-0 flex flex-col justify-between overflow-hidden backdrop-blur transition-all duration-300 ${
         isDark
           ? "border-r border-white/10 bg-slate-950/95 text-white"
           : "border-r border-slate-200 bg-white/80 text-slate-800 shadow-xl shadow-cyan-100/40"
@@ -33,7 +33,7 @@ function Sidebar() {
       }`}
     >
       {/* TOP */}
-      <div>
+      <div className="min-h-0 flex-1 overflow-y-auto">
         {/* Toggle Button */}
         <div className="flex items-center gap-3 p-4">
           <button
@@ -116,7 +116,11 @@ function Sidebar() {
       </div>
 
       {/* FOOTER */}
-      <div className="p-4">
+      <div
+        className={`shrink-0 p-4 ${
+          isDark ? "border-t border-white/10" : "border-t border-slate-200"
+        }`}
+      >
         {!collapsed && (
           <div className="mb-3">
             <ThemeToggle />

@@ -96,3 +96,21 @@ class PredictionListView(APIView):
         predictions = Prediction.objects.filter(user=request.user).order_by('-created')
         serializer = PredictionSerializer(predictions, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class PredictionDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, pk):
+        deleted_count, _ = Prediction.objects.filter(
+            pk=pk,
+            user=request.user,
+        ).delete()
+
+        if deleted_count == 0:
+            return Response(
+                {"error": "Prediction not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        return Response(status=status.HTTP_204_NO_CONTENT)

@@ -37,3 +37,33 @@ class PredictionListTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 0)
+
+    def test_delete_own_prediction(self):
+        prediction = self.user.predictions.create(
+            ticker="AAPL",
+            metrics={"next_day_price": 100, "rmse": 1},
+            plot_urls=[],
+        )
+
+        url = reverse('prediction-detail', kwargs={'pk': prediction.pk})
+        response = self.client.delete(url)
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(self.user.predictions.filter(pk=prediction.pk).exists())
+
+    def test_cannot_delete_other_users_prediction(self):
+        other_user = User.objects.create_user(
+            username="otheruser",
+            password="testpass123",
+        )
+        prediction = other_user.predictions.create(
+            ticker="MSFT",
+            metrics={"next_day_price": 200, "rmse": 2},
+            plot_urls=[],
+        )
+
+        url = reverse('prediction-detail', kwargs={'pk': prediction.pk})
+        response = self.client.delete(url)
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertTrue(other_user.predictions.filter(pk=prediction.pk).exists())

@@ -14,6 +14,60 @@ import {
 } from "recharts";
 import { useTheme } from "../theme";
 
+function formatChartNumber(value, fractionDigits = 2) {
+  const numericValue = Number(value);
+
+  if (!Number.isFinite(numericValue)) {
+    return value;
+  }
+
+  return numericValue.toLocaleString(undefined, {
+    maximumFractionDigits: fractionDigits,
+    minimumFractionDigits: fractionDigits,
+  });
+}
+
+function formatChartDateTime(value) {
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  return date.toLocaleString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+function ChartTooltip({ active, payload, label, isDark, valueFormatter }) {
+  if (!active || !payload?.length) {
+    return null;
+  }
+
+  return (
+    <div
+      className={`rounded-xl border px-3 py-2 text-sm shadow-xl ${
+        isDark
+          ? "border-white/10 bg-slate-950 text-slate-100"
+          : "border-slate-200 bg-white text-slate-900"
+      }`}
+    >
+      <p className={isDark ? "text-slate-300" : "text-slate-500"}>
+        {formatChartDateTime(label)}
+      </p>
+      {payload.map((entry) => (
+        <p key={entry.dataKey} className="font-semibold" style={{ color: entry.color }}>
+          {entry.name || entry.dataKey}: {valueFormatter(entry.value)}
+        </p>
+      ))}
+    </div>
+  );
+}
+
 function Dashboard() {
   const [ticker, setTicker] = useState("");
   const [result, setResult] = useState(null);
@@ -258,8 +312,15 @@ function Dashboard() {
             <LineChart data={result.chart_data}>
               <XAxis dataKey="date" />
               <YAxis />
-              <Tooltip />
-              <Line dataKey="close" stroke="#6366f1" />
+              <Tooltip
+                content={
+                  <ChartTooltip
+                    isDark={isDark}
+                    valueFormatter={(value) => formatChartNumber(value)}
+                  />
+                }
+              />
+              <Line dataKey="close" name="Close" stroke="#6366f1" />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -285,8 +346,15 @@ function Dashboard() {
             <LineChart data={result.chart_data}>
               <XAxis dataKey="date" />
               <YAxis />
-              <Tooltip />
-              <Line dataKey="volume" stroke="green" />
+              <Tooltip
+                content={
+                  <ChartTooltip
+                    isDark={isDark}
+                    valueFormatter={(value) => formatChartNumber(value, 0)}
+                  />
+                }
+              />
+              <Line dataKey="volume" name="Volume" stroke="green" />
             </LineChart>
           </ResponsiveContainer>
         </div>

@@ -9,11 +9,11 @@ function ThemeToggle() {
       onClick={toggleTheme}
       className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${
         isDark
-          ? "border-white/15 bg-white/5 text-slate-100 hover:border-cyan-300 hover:text-cyan-200"
-          : "border-slate-200 bg-white/80 text-slate-700 hover:border-cyan-500 hover:text-cyan-700"
+          ? "border-white/15 bg-white/100 text-slate-100 hover:border-cyan-300 hover:text-cyan-200"
+          : "border-slate-200 bg-black/80 text-slate-700 hover:border-cyan-500 hover:text-cyan-700"
       }`}
     >
-      {isDark ? "Light Mode" : "Dark Mode"}
+      {isDark ? <i className="fas fa-sun bg-white/50 text-yellow-300 "></i> : <i className="fas fa-moon text-white size-5"></i>}
     </button>
   );
 }

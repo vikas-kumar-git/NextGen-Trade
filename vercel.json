@@ -9,6 +9,12 @@
     "backend": {
       "entrypoint": "backend",
       "framework": "django",
+      "excludeFiles": [
+        ".venv/**",
+        "backend/.venv/**",
+        "**/__pycache__/**",
+        "**/*.pyc"
+      ],
       "routePrefix": "/_/backend"
     }
   }

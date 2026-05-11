@@ -29,6 +29,18 @@ function History() {
     item.ticker.toLowerCase().includes(search.toLowerCase())
   );
 
+  //delete history item
+  const deleteHistoryItem = async (id) => {
+    try {
+      await API.delete(`predictions/${id}/`);
+      setHistory((currentHistory) =>
+        currentHistory.filter((item) => item.id !== id)
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const handleClick = (ticker) => {
     navigate("/dashboard", { state: { ticker } });
   };
@@ -103,6 +115,19 @@ function History() {
                 <p className={`text-sm ${isDark ? "text-slate-400" : "text-slate-500"}`}>
                   RMSE: {item.metrics.rmse}
                 </p>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    deleteHistoryItem(item.id);
+                  }}
+                  className={`mt-2 rounded-full px-3 py-1 text-xs font-medium transition ${
+                    isDark
+                      ? "bg-red-600 text-white hover:bg-red-700"
+                      : "bg-red-100 text-red-700 hover:bg-red-200"
+                  }`}
+                >
+                  Delete
+                </button>
               </div>
             </div>
           ))}
